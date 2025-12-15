@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { serveStatic } from "hono/deno";
 import { hentHendelselogggBackup } from "@/hendelselogg-backup.ts";
 import { SearchPage } from "../views/pages/SearchPage.tsx";
+import { Error } from "../views/pages/Error.tsx";
 
 const app = new Hono();
 
@@ -30,5 +31,10 @@ app.post("/search", async (c) => {
     />,
   );
 });
+
+app.onError((err, c) => {
+  console.error(`${err}`)
+  return c.html(<Error message={err.message} />, 500)
+})
 
 Deno.serve({ port: 8000 }, app.fetch);

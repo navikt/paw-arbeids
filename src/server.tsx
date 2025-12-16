@@ -5,6 +5,7 @@ import { SearchPage } from "@/views/pages/SearchPage.tsx";
 import { Error } from "@/views/pages/Error.tsx";
 
 const app = new Hono();
+console.log("Server konfigurert og starter...");
 
 app.use("/static/*", serveStatic({ root: "./" }));
 

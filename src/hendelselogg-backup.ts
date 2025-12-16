@@ -2,8 +2,8 @@ import { getOboToken } from "@/oboToken.ts";
 import { ArbeidsoekerDetaljer, isProblemDetails } from "@/types.ts";
 
 const isLocalhost = Deno.env.get("ENV") === "local";
-const URL_HENDELSESLOGG_BACKUP = "mock-url";
-const SCOPE_HENDELSESLOGG_BACKUP = "mock-scope";
+const HENDELSELOGG_BACKUP_URL = Deno.env.get("HENDELSELOGG_BACKUP_URL");
+const NAIS_CLUSTER_NAME = Deno.env.get("NAIS_CLUSTER_NAME");
 
 /**
  * @param ident er enten identitetsnummer for en person ELLER en periode-id
@@ -20,16 +20,21 @@ export async function hentHendelselogggBackup(
     return detaljer as ArbeidsoekerDetaljer;
   }
 
-  const token = getOboToken(headers, SCOPE_HENDELSESLOGG_BACKUP);
+  const scope =
+    `api://${NAIS_CLUSTER_NAME}.paw.paw-arbeidssoekerregisteret-hendelselogg-backup/.default`;
+  const token = getOboToken(headers, scope);
   if (!token) {
     throw new Error("Kunne ikke hente OBO token for Hendelselslogg backup");
   }
 
+  if (!HENDELSELOGG_BACKUP_URL) {
+    throw new Error("HENDELSELOGG_BACKUP_URL er ikke satt");
+  }
+
   try {
-    const response = await fetch(URL_HENDELSESLOGG_BACKUP, {
+    const response = await fetch(HENDELSELOGG_BACKUP_URL, {
       method: "POST",
-      // TODO: Bytte ut 'ident' med korrekt payload
-      body: JSON.stringify({ ident }),
+      body: JSON.stringify({ identitetsnummer: ident }),
       headers: {
         "content-type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -51,7 +56,7 @@ export async function hentHendelselogggBackup(
 
     return await response.json();
   } catch (e) {
-    console.error(e, `Nettverksfeil mot ${URL_HENDELSESLOGG_BACKUP}`);
+    console.error(e, `Nettverksfeil mot ${HENDELSELOGG_BACKUP_URL}`);
     throw e;
   }
 }

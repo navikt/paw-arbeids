@@ -8,6 +8,10 @@ const app = new Hono();
 
 app.use("/static/*", serveStatic({ root: "./" }));
 
+// Health check
+app.get("/isalive", (c) => c.json("alive"));
+app.get("/isready", (c) => c.json("ready"));
+
 app.get("/", (c) => {
   return c.html(
     <SearchPage title="ARBS" />,
@@ -33,8 +37,8 @@ app.post("/search", async (c) => {
 });
 
 app.onError((err, c) => {
-  console.error(`${err}`)
-  return c.html(<Error message={err.message} />, 500)
-})
+  console.error(`${err}`);
+  return c.html(<Error message={err.message} />, 500);
+});
 
 Deno.serve({ port: 8000 }, app.fetch);

@@ -24,7 +24,7 @@ export async function hentHendelselogggBackup(
 
   const scope =
     `api://${NAIS_CLUSTER_NAME}.paw.paw-arbeidssoekerregisteret-hendelselogg-backup/.default`;
-  const token = getOboToken(headers, scope);
+  const token = await getOboToken(headers, scope);
   if (!token) {
     throw new Error("Kunne ikke hente OBO token for Hendelselslogg backup");
   }

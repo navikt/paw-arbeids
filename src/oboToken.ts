@@ -1,7 +1,7 @@
 import { getToken, requestAzureOboToken } from "@navikt/oasis";
 
 // TODO: denne variablen eksisterer ikke enda
-const isDev = Deno.env.get("TO_BE_SET") === "dev-gcp";
+const isDev = Deno.env.get("NAIS_CLUSTER_NAME") === "dev-gcp";
 
 export async function getOboToken(
   request: Request,
